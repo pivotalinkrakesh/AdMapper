@@ -1,0 +1,233 @@
+/*     */ package com.octetstring.vde.util;
+/*     */ 
+/*     */ import com.octetstring.vde.Credentials;
+/*     */ import com.octetstring.vde.Entry;
+/*     */ import com.octetstring.vde.chain.Chain;
+/*     */ import com.octetstring.vde.chain.ChainException;
+/*     */ import com.octetstring.vde.chain.VirtualServicesInterface;
+/*     */ import com.octetstring.vde.syntax.DirectoryString;
+/*     */ import com.octetstring.vde.syntax.Syntax;
+/*     */ import java.util.Iterator;
+/*     */ import java.util.List;
+/*     */ import java.util.Vector;
+/*     */ 
+/*     */ 
+/*     */ public class ActivationUtil
+/*     */ {
+/*  55 */   public static final DirectoryString MS_AD_ACCOUNTLOCK = new DirectoryString("userAccountControl");
+/*     */   
+/*     */ 
+/*  58 */   private static final DirectoryString MS_ADAM_ACCOUNTLOCK = new DirectoryString("msDS-UserAccountDisabled");
+/*     */   
+/*     */ 
+/*  61 */   private static final DirectoryString NOVELL_ACCOUNTLOCK = new DirectoryString("loginDisabled");
+/*     */   
+/*     */ 
+/*  64 */   public static final DirectoryString TRUE_VAL = new DirectoryString("TRUE");
+/*     */   
+/*     */ 
+/*  67 */   public static final DirectoryString FALSE_VAL = new DirectoryString("FALSE");
+/*     */   
+/*     */ 
+/*  70 */   public static final DirectoryString SUN_ACCOUNTLOCK = new DirectoryString("nsAccountLock");
+/*     */   
+/*     */   public static final int ORACLE_OVD_JOIN = -2;
+/*     */   
+/*     */   public static final int ORACLE_OID = -1;
+/*     */   
+/*     */   public static final int SUN_SUNONE = 0;
+/*     */   
+/*     */   public static final int MS_AD = 1;
+/*     */   
+/*     */   public static final int MS_ADAM = 2;
+/*     */   
+/*     */   public static final int NOVELL_EDIRECTORY = 3;
+/*     */   
+/*     */   public static final int ORACLE_OUD = 4;
+/*     */   
+/*     */   private PluginUtil util;
+/*     */   
+/*  88 */   public static VDELogger logger = VDELogger.getLogger(ActivationUtil.class.getName());
+/*     */   
+/*     */   public static final String build = "5320M";
+/*     */   
+/*     */   static
+/*     */   {
+/*  94 */     logger.info("OVD-20201", new Object[] { "5320M" });
+/*     */   }
+/*     */   
+/*     */   public ActivationUtil()
+/*     */   {
+/*  99 */     this.util = PluginUtil.getInstance();
+/*     */   }
+/*     */   
+/*     */ 
+/*     */   public void activateAccount(int directoryType, Entry entry, DirectoryString activationAttribute, List activeVals, List deactiveVals)
+/*     */   {
+/*     */     Iterator it;
+
+			while (it.hasNext()) {
+/*     */     
+/*     */ 
+/*     */ 
+/* 112 */     switch (directoryType) {
+/*     */     case 0: 
+/* 114 */       this.util.copyAdd(activationAttribute, SUN_ACCOUNTLOCK, entry);
+/* 115 */       it = activeVals.iterator();
+/* 116 */       while (it.hasNext()) {
+/* 117 */         DirectoryString activatedValue = (DirectoryString)it.next();
+/* 118 */         this.util.revalueAdd(SUN_ACCOUNTLOCK, activatedValue, FALSE_VAL, entry);
+/*     */       }
+/* 121 */     case 3: case 2: case 1:
+			it = deactiveVals.iterator();
+			this.util.copyAdd(activationAttribute, NOVELL_ACCOUNTLOCK, entry);
+
+/* 122 */         DirectoryString deactivatedValue = (DirectoryString)it.next();
+/* 123 */         this.util.revalueAdd(SUN_ACCOUNTLOCK, deactivatedValue, TRUE_VAL, entry);
+/* 124 */         continue;
+/*     */ 
+/* 130 */         it = activeVals.iterator();
+/* 131 */         while (it.hasNext()) {
+/* 132 */           DirectoryString activatedValue = (DirectoryString)it.next();
+/* 133 */           this.util.revalueAdd(NOVELL_ACCOUNTLOCK, activatedValue, FALSE_VAL, entry);
+/*     */         }
+/*     */         
+/* 136 */         it = deactiveVals.iterator();
+/* 137 */         while (it.hasNext()) {
+/* 138 */           DirectoryString _temp = (DirectoryString)it.next();
+/* 139 */           this.util.revalueAdd(NOVELL_ACCOUNTLOCK, _temp, TRUE_VAL, entry);
+/* 140 */           continue;
+/*     */           
+/* 145 */           this.util.copyAdd(activationAttribute, MS_ADAM_ACCOUNTLOCK, entry);
+/* 146 */           it = activeVals.iterator();
+/* 147 */           while (it.hasNext()) {
+/* 148 */             DirectoryString activatedValue = (DirectoryString)it.next();
+/* 149 */             this.util.revalueAdd(MS_ADAM_ACCOUNTLOCK, activatedValue, FALSE_VAL, entry);
+/*     */           }
+/*     */           
+/* 152 */           it = deactiveVals.iterator();
+/* 153 */           while (it.hasNext()) {
+/* 154 */             DirectoryString _temp1 = (DirectoryString)it.next();
+/* 155 */             this.util.revalueAdd(MS_ADAM_ACCOUNTLOCK, _temp1, TRUE_VAL, entry);
+/* 156 */             continue;
+/*     */             
+/* 161 */             this.util.copyAdd(activationAttribute, MS_AD_ACCOUNTLOCK, entry);
+/* 162 */             it = activeVals.iterator();
+/* 163 */             while (it.hasNext()) {
+/* 164 */               DirectoryString activatedValue = (DirectoryString)it.next();
+/* 165 */               this.util.revalueAdd(MS_AD_ACCOUNTLOCK, activatedValue, new DirectoryString("544"), entry);
+/*     */             }
+/*     */             
+/* 168 */             it = deactiveVals.iterator();
+/* 169 */             while (it.hasNext()) {
+/* 170 */               DirectoryString _deactivatedValue = (DirectoryString)it.next();
+/* 171 */               this.util.revalueAdd(MS_AD_ACCOUNTLOCK, _deactivatedValue, new DirectoryString("546"), entry);
+/*     */             }
+/*     */           }
+/*     */         }
+/*     */       }
+/*     */     }	
+/*     */     
+/*     */   }
+/*     */   
+/*     */ 
+/*     */ 
+/*     */   public void activateAccount(int directoryType, Vector changes, Chain chain, Credentials creds, DirectoryString name, DirectoryString activationAttribute, List activeVals, List deactiveVals)
+/*     */     throws ChainException, DirectoryException
+/*     */   {
+/* 191 */     activateAccount(directoryType, changes, chain, creds, name, activationAttribute, activeVals, deactiveVals, null);
+/*     */   }
+/*     */   
+/*     */ 
+/*     */ 
+/*     */ 
+/*     */ 
+/*     */ 
+/*     */   public void activateAccount(int directoryType, Vector changes, Chain chain, Credentials creds, DirectoryString name, DirectoryString activationAttribute, List activeVals, List deactiveVals, Entry entry)
+/*     */     throws ChainException, DirectoryException
+/*     */   {
+/*     */     Iterator it;
+/*     */     
+/*     */ 
+/*     */ 
+/*     */ 
+/*     */ 
+/* 208 */     switch (directoryType) {
+/*     */     case 0: 
+/* 210 */       this.util.copyModify(activationAttribute, SUN_ACCOUNTLOCK, changes);
+/*     */       
+/* 212 */       it = activeVals.iterator();
+/* 213 */       while (it.hasNext()) {
+/* 214 */         DirectoryString activatedValue = (DirectoryString)it.next();
+/* 215 */         this.util.revalueModify(SUN_ACCOUNTLOCK, activatedValue, FALSE_VAL, changes);
+/*     */       }
+/*     */       
+/* 218 */       it = deactiveVals.iterator();
+/* 219 */     case 3: case 2: case 1:  while (it.hasNext()) {
+/* 220 */         DirectoryString deactivatedValue = (DirectoryString)it.next();
+/* 221 */         this.util.revalueModify(SUN_ACCOUNTLOCK, deactivatedValue, TRUE_VAL, changes);
+/* 222 */         continue;
+/*     */         
+/*     */ 
+/*     */ 
+/*     */ 
+/* 227 */         this.util.copyModify(activationAttribute, NOVELL_ACCOUNTLOCK, changes);
+/* 228 */         it = activeVals.iterator();
+/* 229 */         while (it.hasNext()) {
+/* 230 */           DirectoryString activatedValue = (DirectoryString)it.next();
+/* 231 */           this.util.revalueModify(NOVELL_ACCOUNTLOCK, activatedValue, FALSE_VAL, changes);
+/*     */         }
+/*     */         
+/* 234 */         it = deactiveVals.iterator();
+/* 235 */         while (it.hasNext()) {
+/* 236 */           DirectoryString deactivatedValue = (DirectoryString)it.next();
+/* 237 */           this.util.revalueModify(NOVELL_ACCOUNTLOCK, deactivatedValue, TRUE_VAL, changes);
+/* 238 */           continue;
+/*     */           
+/*     */ 
+/*     */ 
+/* 242 */           this.util.copyModify(activationAttribute, MS_ADAM_ACCOUNTLOCK, changes);
+/* 243 */           it = activeVals.iterator();
+/* 244 */           while (it.hasNext()) {
+/* 245 */             DirectoryString activatedValue = (DirectoryString)it.next();
+/* 246 */             this.util.revalueModify(MS_ADAM_ACCOUNTLOCK, activatedValue, FALSE_VAL, changes);
+/*     */           }
+/*     */           
+/* 249 */           it = deactiveVals.iterator();
+/* 250 */           while (it.hasNext()) {
+/* 251 */             DirectoryString deactivatedValue = (DirectoryString)it.next();
+/* 252 */             this.util.revalueModify(MS_ADAM_ACCOUNTLOCK, deactivatedValue, TRUE_VAL, changes);
+/* 253 */             continue;
+/*     */             
+/*     */ 
+/*     */ 
+/* 257 */             this.util.copyModify(activationAttribute, MS_AD_ACCOUNTLOCK, changes);
+/* 258 */             if (entry == null) {
+/* 259 */               entry = chain.getVSI().getByDn(chain.getRequest(), creds, name);
+/*     */             }
+/*     */             
+/* 262 */             if (entry.get(MS_AD_ACCOUNTLOCK) == null) {
+/* 263 */               return;
+/*     */             }
+/*     */             
+/* 266 */             int userAccountControl = Integer.parseInt(((Syntax)entry.get(MS_AD_ACCOUNTLOCK).get(0)).toString());
+/*     */             
+/* 268 */             it = activeVals.iterator();
+/* 269 */             while (it.hasNext()) {
+/* 270 */               DirectoryString activatedValue = (DirectoryString)it.next();
+/* 271 */               this.util.revalueModify(MS_AD_ACCOUNTLOCK, activatedValue, new DirectoryString(Integer.toString(userAccountControl & 0xFFFFFFFD)), changes);
+/*     */             }
+/*     */             
+/* 274 */             it = deactiveVals.iterator();
+/* 275 */             while (it.hasNext()) {
+/* 276 */               DirectoryString deactivatedValue = (DirectoryString)it.next();
+/* 277 */               this.util.revalueModify(MS_AD_ACCOUNTLOCK, deactivatedValue, new DirectoryString(Integer.toString(userAccountControl | 0x2)), changes);
+/*     */             }
+/*     */           }
+/*     */         }
+/*     */       }
+/*     */     }
+/*     */   }
+/*     */ }
+
+

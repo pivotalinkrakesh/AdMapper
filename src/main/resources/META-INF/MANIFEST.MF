@@ -1,0 +1,19 @@
+Manifest-Version: 1.0
+vde-package-param-delimiter-description: ADMapper
+vde-package-param-jobTitle-description: ADMapper
+vde-package-classname: com.octetstring.vde.chain.plugins.objectClass.ObjectClassMapper
+Created-By: 1.8.0_05 (Sun Microsystems Inc.)
+Ant-Version: Apache Ant 1.8.2
+vde-package-ops-modify: true
+vde-package-param-originalAttribute-description: ADMapper
+vde-package-description: ADMapper
+vde-package-ops-rename: true
+vde-package-version: 9
+vde-package-ops-get: true
+vde-package-ops-delete: true
+vde-package-ops-add: true
+vde-package-ops-bind: true
+vde-package-name: ADMapper
+vde-package-type: 0
+vde-package-param-mapAttribute-description: ADMapper
+vde-package-param-mapObjectClass-description: ADMapper
