@@ -1,0 +1,25 @@
+
+
+
+
+
+
+
+
+
+
+BEGINING Object Mapper
+Time: Wed Jun 29 20:42:28 EDT 2016
+***************************************
+init invoked...
+param[mapAttribute]
+[attib1=newattrib1, attib2=newattrib2]
+param[mapObjectClass]
+[class1=newclass1, class2=newclass2]
+paramName-addAttribute-objectClassToBeAdded
+paramName-filterAttribute-removeOC
+objectClass Attributes to Add - {objectClassToBeAdded={ocAttrib2=[[ocVal2]], ocAttrib1=[[%val%, ocVal2]]}}
+paramName addAttribute-objectClassToBeAdded
+paramName filterAttribute-removeOC
+objectClass Attributes to remove{removeOC=[removeme1, removeme2]}
+attributes to add{ocAttrib2=[[ocVal2]], ocAttrib1=[[%val%, ocVal2]]}
